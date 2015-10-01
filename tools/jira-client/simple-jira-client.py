@@ -7,23 +7,23 @@ from email.mime.text import MIMEText
 
 def sendNotification(subject, message):
   msg = MIMEText(message)
-  msg['To'] = email.utils.formataddr(('Recipient', 'bpraditkul@rocketfuelinc.com'))
-  msg['From'] = email.utils.formataddr(('Author', 'bpraditkul@rocketfuelinc.com'))
+  msg['To'] = email.utils.formataddr(('Recipient', '<email>'))
+  msg['From'] = email.utils.formataddr(('Author', '<email>'))
   msg['Subject'] = subject
 
   server = smtplib.SMTP('localhost')
   server.set_debuglevel(True) # show communication with the server
   try:
-    server.sendmail('bpraditkul@rocketfuelinc.com', ['bpraditkul@rocketfuelinc.com'], msg.as_string())
+    server.sendmail('<email>', ['<email>'], msg.as_string())
   finally:
     server.quit()
 
 def connect_to_jira():
-  jira_options = {'server': 'http://jira.rocketfuel.com'}
+  jira_options = {'server': 'http://<jira server>'}
 
   #try:
   jiraStr = ''
-  jira = JIRA (options=jira_options, basic_auth=('bpraditkul','G3tt1ngTh3r3!'))
+  jira = JIRA (options=jira_options, basic_auth=('<id>','<password>'))
   issues = jira.search_issues('issuetype=Change\ Notification')
   issue = issues[0] 
 
