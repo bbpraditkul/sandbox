@@ -2,6 +2,7 @@
 import random
 import re
 import sys
+import os
 from copy import deepcopy
 import pickle
 
@@ -31,6 +32,8 @@ def main():
     print "[testRegexes]", testRegexes()
     print "[testEmailSearches]", testEmailSearches()
     print "[testPickling]", testPickling()
+    print "[testSysCommands]", testSysCommands()
+    print "[testPassingArgs]", testPassingArgs()
 
 #testStrings() tests a few built-in string methods
 #
@@ -223,6 +226,24 @@ def testPickling():
     in_file = open('pickle.txt', 'rb')
     new_list = pickle.load(in_file)
     print new_list
+
+#testSysCommands() demonstrates how to invoke system calls from the shell
+def testSysCommands():
+    os.system('env  '
+              '| grep SHELL'
+    )
+    return
+
+#testPassingArgs() demonstrates how to pass arguments between functions
+def testPassingArgs():
+    my_dictionary = {'b':'1', 'c':'2'}
+
+    #"*" is typically used for a list (when the number of args isn't known), "**" is used for a dictionary
+    def passItHere(**kwargs):
+        for key,value in kwargs.items():
+            print "%s => %s" % (key,value)
+
+    passItHere(**my_dictionary)
 
 #Time to invoke our functions...
 #
