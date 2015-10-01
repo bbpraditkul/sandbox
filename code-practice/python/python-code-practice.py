@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import random
+import re
+import sys
 
 __author__ = 'BryanPraditkul'
 
@@ -19,8 +21,9 @@ def main():
     #print "[testingExits]", testingExits()
     #print "[testingExceptionHandling]", testingExceptionHandling()
     print "[testingUserInput]", testingUserInput()
-
-
+    print "[testingFiles]", testingFiles()
+    print "[testingArgs]", testingArgs()
+    print "[testingListsAndLOL]", testingListsAndLOL()
 
 #testingStrings() tests a few built-in string methods
 #
@@ -89,13 +92,50 @@ def testingUserInput():
     finally:
         print "getting the last word in :)"
 
+#testingFiles() plays a bit with files
+def testingFiles():
+    filename = "sandboxdata.txt"
+    #f = open(filename)
+    #lines = f.readlines()
+    for line in open(filename):
+        #print line
+        testingParsing(line)
 
+#testingParsing() splits the lines with a whitespace as the delimiter
+def testingParsing(line):
+    my_items = re.split(r'\s+', line)
+    del my_items[0]
+    print my_items
+    #for item in my_items:
+        #print "test", item
 
+#testingArgs(() tests basic argument input
+def testingArgs():
+    if len(sys.argv) > 1:
+        return sys.argv[1]
+    else:
+        return "No Arguments"
 
+def testingListsAndLOL():
+    simpleList = ["cow", "bear", "dog"]
+    LoL = [["a", "b", "c"],
+           ["d", "e", "f"]]
 
+    copiedList = list(simpleList)
+    copiedList[2] = "chicken"
+    print simpleList
+    print copiedList
 
+    #still working on this as copies of LoL don't seem to be anything more than a reference...
 
-
+    for i in LoL:
+        print i[0]  #first element of each sub list
+    print LoL[0][1] #2nd element of the first list
+    #LoL2 = copy(LoL)   #copies the entire list
+    #LoL2 = list(LoL)
+    #LoL2[0][1] = "z"
+    #print LoL
+    #print LoL2
 
 
 #Time to invoke our functions...
