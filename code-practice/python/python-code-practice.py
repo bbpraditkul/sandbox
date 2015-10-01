@@ -2,6 +2,7 @@
 import random
 import re
 import sys
+from copy import deepcopy
 
 __author__ = 'BryanPraditkul'
 
@@ -24,6 +25,7 @@ def main():
     print "[testingFiles]", testingFiles()
     print "[testingArgs]", testingArgs()
     print "[testingListsAndLOL]", testingListsAndLOL()
+    print "[testingHoL]", testingHoL()
 
 #testingStrings() tests a few built-in string methods
 #
@@ -116,6 +118,7 @@ def testingArgs():
     else:
         return "No Arguments"
 
+#testingListsAndLoL() demonstrates a few nuances when performing normal copy ops with Lists vs LoLs
 def testingListsAndLOL():
     simpleList = ["cow", "bear", "dog"]
     LoL = [["a", "b", "c"],
@@ -126,16 +129,38 @@ def testingListsAndLOL():
     print simpleList
     print copiedList
 
-    #still working on this as copies of LoL don't seem to be anything more than a reference...
-
     for i in LoL:
         print i[0]  #first element of each sub list
     print LoL[0][1] #2nd element of the first list
-    #LoL2 = copy(LoL)   #copies the entire list
-    #LoL2 = list(LoL)
-    #LoL2[0][1] = "z"
-    #print LoL
-    #print LoL2
+    #LoL2 = copy(LoL)   #shallow copies the entire list
+    #LoL2 = list(LoL)   #doesn't work for LoL
+    #LoL2 = LoL[:]  #performs a slice which results in a reference to the list
+    LoL2 = deepcopy(LoL)    #for LoL, deepcopies work to copy the contents in the nested list elements
+    LoL2[0][1] = "z"
+    print LoL
+    print LoL2
+
+#testingHoL() demonstrates a few add/del methods available when dealing with HoLs
+def testingHoL():
+    HoL = { 'a': ['a-1','a-2'],
+            'b': ['b-3','b-4'],
+            'c': ['c-5','c-6'] }
+    #return HoL
+
+    HoL['d'] = ['d-7','d-8']
+
+    if 'c' in HoL:
+        del HoL['c']
+        #pop() would also work, but be careful as it'll raise a KeyError if the key doesn't exist
+
+    for i in sorted(HoL.values()):
+        print i[0]
+
+    if HoL.has_key('b'):
+        print "has the key 'b'"
+    else:
+        print "missing the 'b' key"
+
 
 
 #Time to invoke our functions...
