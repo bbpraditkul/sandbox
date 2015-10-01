@@ -1,7 +1,7 @@
 #!/bin/bash
-USERNAME=admin
+USERNAME=<user>
 PASSWORD=<password>
-INSTANCE=apixio.atlassian.net
+INSTANCE=<server>
 LOCATION=/var/data/jira-backups
 
 # Grabs cookies and generates the backup on the UI.
