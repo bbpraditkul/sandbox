@@ -1,0 +1,7 @@
+F   UID   PID  PPID PRI  NI    VSZ   RSS WCHAN  STAT TTY        TIME COMMAND
+1    26  3269  0  16   0   9720  1872 -      S    ?          0:06 postgres: stats buffer process                    
+1    26  3277  3269  16   0   9720  1872 -      S    ?          0:06 postgres: stats buffer process                    
+1    26  3278  3277  15   0   9376  1624 -      S    ?          0:12 postgres: stats collector process                 
+1    26  3280  3277  15   0   9376  1624 -      S    ?          0:12 postgres: stats collector process                 
+1    26  3280  3278  15   0   9376  1624 -      S    ?          0:12 postgres: stats collector process                 
+1    26  3279  3269  16   0   9720  1872 -      S    ?          0:06 postgres: stats buffer process                    

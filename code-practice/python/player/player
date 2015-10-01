@@ -1,0 +1,9 @@
+class Player(object)
+    def __init__(self, name, score =0):
+        self.name = name
+        self.score = score
+
+    def __str__(self):
+        rep = self.name + ":\t" + str(self.score)
+
+def ask_yes_noe(question)

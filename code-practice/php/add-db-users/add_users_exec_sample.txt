@@ -1,0 +1,73 @@
+##################
+# mock json file after vanilla apache install
+#
+
+[root@devopsdemo-dev1.devopsdemo.us-east-1 ~]# cat /var/www/html/public/users
+[
+  {"name":"John Doe","id":1,"value":"blah","timestamp":"2013-06-01"},
+  {"name":"Jane Doe","id":2,"value":"blah","timestamp":"2013-06-01"}
+]
+
+##################
+# mock db after vanilla mysql install, creating user, granting privs, and creating quick table
+#
+
+mysql> create table my_users (name VARCHAR(100), id INT not null, value VARCHAR(1024), timestamp DATETIME);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> describe my_users
+    -> ;
++-----------+---------------+------+-----+---------+-------+
+| Field     | Type          | Null | Key | Default | Extra |
++-----------+---------------+------+-----+---------+-------+
+| name      | varchar(100)  | YES  |     | NULL    |       |
+| id        | int(11)       | NO   |     | NULL    |       |
+| value     | varchar(1024) | YES  |     | NULL    |       |
+| timestamp | datetime      | YES  |     | NULL    |       |
++-----------+---------------+------+-----+---------+-------+
+
+##################
+# sample run 
+#
+
+[root@devopsdemo-dev1.devopsdemo.us-east-1 ~]# php add_users_to_db.php http://devopsdemo.dev.inpwrd.net/users
+Array
+(
+    [name] => John Doe
+    [id] => 1
+    [value] => blah
+    [timestamp] => 2013-06-01
+)
+Array
+(
+    [name] => Jane Doe
+    [id] => 2
+    [value] => blah
+    [timestamp] => 2013-06-01
+)
+
+###################
+# Check DB table output
+#
+
+[root@devopsdemo-dev1.devopsdemo.us-east-1 ~]# mysql -udevops -p
+Enter password:
+
+mysql> use usersdb
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> select * from my_users;
+
++----------+----+-------+---------------------+
+| name     | id | value | timestamp           |
++----------+----+-------+---------------------+
+| John Doe |  1 | blah  | 2013-06-01 00:00:00 |
+| Jane Doe |  2 | blah  | 2013-06-01 00:00:00 |
++----------+----+-------+---------------------+
+2 rows in set (0.00 sec)
+
+mysql> exit
+Bye
+

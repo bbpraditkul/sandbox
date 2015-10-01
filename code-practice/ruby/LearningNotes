@@ -1,0 +1,13 @@
+Learning Ruby
+
+Advice from a seasoned Rubyist:
+Ruby (and to a lesser extent, Python and Perl) is not just different syntax from Java or C/C++ or bash; it's a powerful meta-programming language.  In Ruby's case, it's almost as powerful as Lisp or Smalltalk.
+
+Current Language Reference:
+http://www.amazon.com/Programming-Ruby-1-9-2-0-Programmers/dp/1937785491
+
+Learning should start basic as the conventions and patterns are different from existing languages:
+http://www.amazon.com/Learn-Program-Second-Facets-Ruby/dp/1934356360/ref=sr_1_1?s=books&ie=UTF8&qid=1421167998&sr=1-1&keywords=ruby+how+to+program
+
+Ultimate reference guide once proficient:
+https://pragprog.com/book/ppmetr2/metaprogramming-ruby-2
