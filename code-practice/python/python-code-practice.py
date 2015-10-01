@@ -3,6 +3,7 @@ import random
 import re
 import sys
 from copy import deepcopy
+import pickle
 
 __author__ = 'BryanPraditkul'
 
@@ -16,20 +17,24 @@ my_str = 'This is a test string'
 #Let's insure that we don't invoke the functions if the module isn't explicitly executed.
 #
 def main():
-    print "[testingStrings]", testingStrings(my_str)
-    print "[testingConditions]", testingConditions(my_str)
-    print "[testingLoopControls]", testingLoopControls()
-    #print "[testingExits]", testingExits()
-    #print "[testingExceptionHandling]", testingExceptionHandling()
-    print "[testingUserInput]", testingUserInput()
-    print "[testingFiles]", testingFiles()
-    print "[testingArgs]", testingArgs()
-    print "[testingListsAndLOL]", testingListsAndLOL()
-    print "[testingHoL]", testingHoL()
+    print "[testStrings]", testStrings(my_str)
+    print "[testConditions]", testConditions(my_str)
+    print "[testLoopControls]", testLoopControls()
+    #print "[testExits]", testExits()
+    #print "[testExceptionHandling]", testExceptionHandling()
+    print "[testUserInput]", testUserInput()
+    print "[testFiles]", testFiles()
+    print "[testArgs]", testArgs()
+    print "[testListsAndLOL]", testListsAndLOL()
+    print "[testDictionaries]", testDictionaries()
+    print "[testHoL]", testHoL()
+    print "[testRegexes]", testRegexes()
+    print "[testEmailSearches]", testEmailSearches()
+    print "[testPickling]", testPickling()
 
-#testingStrings() tests a few built-in string methods
+#testStrings() tests a few built-in string methods
 #
-def testingStrings(my_str):
+def testStrings(my_str):
     length = len(my_str)
     uppercase = my_str.upper()
     fifth_char = my_str[5]
@@ -46,9 +51,9 @@ def testingStrings(my_str):
 
     return ''.join(out)
 
-#testingConditions() tests condition statements
+#testConditions() tests condition statements
 #
-def testingConditions(my_str):
+def testConditions(my_str):
     if my_str.startswith("e"):
         return "It started with an 'e'"
     elif my_str.endswith("g"):
@@ -56,8 +61,8 @@ def testingConditions(my_str):
     else:
         return "It matched nada..."
 
-#testingLoopControls() tests loop controls
-def testingLoopControls():
+#testLoopControls() tests loop controls
+def testLoopControls():
     count = 0
     while (count <= 5):
         if (count == 3):
@@ -67,20 +72,20 @@ def testingLoopControls():
         count += 1
     return "Count completed"
 
-#testingExits() tests simple system exits
+#testExits() tests simple system exits
 #
-def testingExits():
+def testExits():
     raise SystemExit("Uh Oh.  I exited for some reason.")
 
-#testingExceptionHandling() tests "try" blocks
-def testingExceptionHandling():
+#testExceptionHandling() tests "try" blocks
+def testExceptionHandling():
     try:
         x = 1/0
     except ZeroDivisionError:
         print "tried to divide by 0"
 
-#testingUserInput plays a bit with simple user input
-def testingUserInput():
+#testUserInput plays a bit with simple user input
+def testUserInput():
     random_number = random.randint(1,1000)
     try:
         some_input = raw_input("Give me a number...")
@@ -94,32 +99,32 @@ def testingUserInput():
     finally:
         print "getting the last word in :)"
 
-#testingFiles() plays a bit with files
-def testingFiles():
+#testFiles() plays a bit with files
+def testFiles():
     filename = "sandboxdata.txt"
     #f = open(filename)
     #lines = f.readlines()
     for line in open(filename):
         #print line
-        testingParsing(line)
+        testParsing(line)
 
-#testingParsing() splits the lines with a whitespace as the delimiter
-def testingParsing(line):
+#testParsing() splits the lines with a whitespace as the delimiter
+def testParsing(line):
     my_items = re.split(r'\s+', line)
     del my_items[0]
     print my_items
     #for item in my_items:
         #print "test", item
 
-#testingArgs(() tests basic argument input
-def testingArgs():
+#testArgs(() tests basic argument input
+def testArgs():
     if len(sys.argv) > 1:
         return sys.argv[1]
     else:
         return "No Arguments"
 
-#testingListsAndLoL() demonstrates a few nuances when performing normal copy ops with Lists vs LoLs
-def testingListsAndLOL():
+#testListsAndLoL() demonstrates a few nuances when performing normal copy ops with Lists vs LoLs
+def testListsAndLOL():
     simpleList = ["cow", "bear", "dog"]
     LoL = [["a", "b", "c"],
            ["d", "e", "f"]]
@@ -140,8 +145,14 @@ def testingListsAndLOL():
     print LoL
     print LoL2
 
-#testingHoL() demonstrates a few add/del methods available when dealing with HoLs
-def testingHoL():
+#testDictionaries() tests basic init and return of dictionaries
+def testDictionaries():
+    myDict = {'b':'1', 'a':'2'}
+    for key, value in sorted(myDict.items()):
+        print key,value
+
+#testHoL() demonstrates a few add/del methods available when dealing with HoLs
+def testHoL():
     HoL = { 'a': ['a-1','a-2'],
             'b': ['b-3','b-4'],
             'c': ['c-5','c-6'] }
@@ -161,7 +172,57 @@ def testingHoL():
     else:
         print "missing the 'b' key"
 
+#testRegexes() demonstrates how to do simple matches and a quick search/replace
+def testRegexes():
+    my_str = 'the cow jumps over the moon'
+    #if re.match('jumps', my_str):
+    if re.search('\S*\sover', my_str):
+        print "found a match"
+    else:
+        print "no match"
 
+    my_new_str = my_str.replace('jump', 'waddle')
+    print my_new_str
+
+def testEmailSearches():
+    print "how many entries are there?"
+    num_of_entries = raw_input()
+    all_emails = {}
+    counter = 0
+    out = []
+    while (counter < int(num_of_entries)):
+        email = ""
+        print "enter a line of text with an email embedded somewhere"
+        my_str = raw_input()
+        line_entry = re.findall("(\S+\@\w+\.[^\s]+)", my_str)
+        if line_entry:
+            for email_raw in line_entry:
+                email = re.sub(r'\W$', "", email_raw)
+        else:
+            pass
+
+        if email == "":     #gives a little insurance instead of doing something like "if not email" since None, 0, False would incorrectly get into this condition.
+            pass
+        else:
+            #if we wanted to sort (regardless of capitalization,
+            #for key in sorted(all_emails.keys(), key=lambda v: v.upper()):
+            #    out.append(key)
+            out.append(email)
+
+        counter += 1
+
+    return ';'.join(out)
+
+#testPickling() demonstrates how to serialize and deserialize a list. The advantage of pickling is to turn the object into a stream of data that can be then sent over a network (eg for map-reduce, distributed computing scenarios, etc)
+def testPickling():
+    my_list = ['mocha','latte','dark coffee','americano']
+    out_file = open('pickle.txt', 'wb')
+    pickle.dump(my_list, out_file)
+    out_file.close()
+    print "Done creating pickle file"
+    in_file = open('pickle.txt', 'rb')
+    new_list = pickle.load(in_file)
+    print new_list
 
 #Time to invoke our functions...
 #
