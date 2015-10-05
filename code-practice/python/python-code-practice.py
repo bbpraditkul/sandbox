@@ -34,6 +34,7 @@ def main():
     print "[testPickling]", testPickling()
     print "[testSysCommands]", testSysCommands()
     print "[testPassingArgs]", testPassingArgs()
+    print "[testMessageInput]", testMessageInput()
 
 #testStrings() tests a few built-in string methods
 #
@@ -244,6 +245,26 @@ def testPassingArgs():
             print "%s => %s" % (key,value)
 
     passItHere(**my_dictionary)
+
+def testMessageInput():
+    num_of_lines = raw_input("How many lines are you putting in!")
+    counter = 0
+    my_list = []
+    while (counter < int(num_of_lines)):
+        counter += 1
+        my_str = raw_input("Give it a go:")
+        my_list.append(my_str)
+
+    for j in my_list:
+        if re.search('^foo$', j):
+            print "Line ", j, ": why just foo?"
+        elif re.search('bar$', j):
+            print "Line ", j, ": ok, the end bar's in there"
+        elif re.search('\S*foobar\S*', j):
+            print "Line ", j, ": ok, now we're getting somewhere"
+        else:
+            print "don't give up!"
+
 
 #Time to invoke our functions...
 #
