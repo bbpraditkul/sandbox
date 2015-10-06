@@ -35,6 +35,7 @@ def main():
     print "[testSysCommands]", testSysCommands()
     print "[testPassingArgs]", testPassingArgs()
     print "[testMessageInput]", testMessageInput()
+    print "[testMoreRegexesAndLists]", testMoreRegexesAndLists()
 
 #testStrings() tests a few built-in string methods
 #
@@ -265,6 +266,25 @@ def testMessageInput():
         else:
             print "don't give up!"
 
+def testMoreRegexesAndLists():
+    counter = 0
+    num_of_entries = int(raw_input("How Many Lines?"))
+    my_output = []
+
+    while (counter < num_of_entries):
+        my_list = []
+        my_str = raw_input()
+        m = re.search('(\d+).(\d+).(\d+)', my_str)
+        if m:
+            my_list.append("CountryCode=" + m.group(1))
+            my_list.append("LocalAreaCode=" + m.group(2))
+            my_list.append("Number=" + m.group(3))
+
+        my_output.append('.'.join(my_list))
+        counter += 1
+
+    for line in my_output:
+        print line
 
 #Time to invoke our functions...
 #
