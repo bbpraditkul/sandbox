@@ -1,0 +1,75 @@
+---
+- name: Deploy myapp
+  hosts: myapp
+  vars:
+    deploy_home: "/etc/deploy/myc-myapp"
+    app_home: /etc/myc-myapp
+    app_name: "myc-myapp"
+    repository_id: "release-rpms"
+    group_id: "mycompany"
+    artifact_id: "mycompany-service-wrappers-myapp"
+    file_type: "rpm"
+    nexus_read_only_user: "mycompany_deploy"
+    nexus_read_only_password: "mycompany123"
+  remote_user: deploy
+  sudo: yes 
+  tasks:
+
+  #- name: Deploy the code
+  #  command: sh /root/deploy/bin/simple-deploy.sh
+
+  - name: Create a few directories
+    file: path={{ item.dir_path }} state=directory mode={{ item.mode }}
+    with_items:
+      - dir_path: "{{ deploy_home }}/tmp/config" 
+        mode: 0644
+      - dir_path: "{{ deploy_home }}/tmp/artifacts"
+        mode: 0644
+      - dir_path: "{{ deploy_home }}/tmp/common"
+        mode: 0644
+    tags: predeploy
+
+  # Backup the current config in the environment.
+  - name: Backup Current Config
+    command: cp {{ app_home }}/application.yaml {{ deploy_home }}/tmp/config/application.yaml
+    ignore_errors: yes
+    tags: backup_config
+
+  - name: Retrieve the latest RPM id
+    shell: curl -s "https://build.mycompany.com:9090/nexus/service/local/artifact/maven/resolve?r={{ repository_id }}&g={{ group_id }}&a={{ artifact_id }}&v=LATEST&p={{ file_type }}"  -umycompany_deploy:mycompany123 | grep -oP "(?<=<version>).*(?=</version)"
+    register: version_id
+    tags: get_pkg
+
+  - name: Get the latest RPM 
+    command: 'curl "https://build.mycompany.com:9090/nexus/service/local/artifact/maven/redirect?r={{ repository_id }}&g={{ group_id }}&a={{ artifact_id }}&v={{ version_id.stdout }}&p={{ file_type }}" -L -o {{ deploy_home }}/tmp/artifacts/{{ artifact_id }}-{{ version_id.stdout }}.{{ file_type }} -u{{ nexus_read_only_user }}:{{ nexus_read_only_password }}'
+    tags: get_pkg
+
+  - name: Stopping Application
+    service: name={{ app_name }} state=stopped
+    ignore_errors: yes
+    tags: stop_app
+
+  # Uninstall the old app
+  - name: Uninstalling the old deploy package
+    command: 'yum -y remove {{ app_name }}.noarch'
+    ignore_errors: yes
+    tags: uninstall_old
+
+  # Install the rpm
+  - name: Installing the new deploy package
+    command: 'yum -y install {{ deploy_home }}/tmp/artifacts/{{ artifact_id }}-{{ version_id.stdout }}.{{ file_type }}'
+    #yum: name={{ deploy_home }}/tmp/myapp.rpm state=present
+    #sudo: yes
+    tags: install_new
+
+  # Restore the current config in the environment.
+  - name: Restoring Current Config
+    command: cp {{ deploy_home }}/tmp/config/application.yaml {{ app_home }}/application.yaml 
+    ignore_errors: yes
+    tags: restore_config
+
+  #Start Accounts Service 
+    
+  - name: Starting Application
+    service: name={{ app_name }} state=started enabled=yes
+    tags: start_app

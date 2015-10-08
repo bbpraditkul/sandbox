@@ -1,0 +1,12 @@
+---
+- name: Delete User
+  hosts: all
+  vars:
+  remote_user: root
+  tasks:
+
+  #- name: Deploy the code
+  #  command: sh /root/deploy/bin/simple-deploy.sh
+
+  - name: Delete the User if found
+    user: name=deploy state=absent remove=yes

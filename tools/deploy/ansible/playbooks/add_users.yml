@@ -1,0 +1,23 @@
+---
+- name: Add Users
+  hosts: all
+  vars:
+  remote_user: root
+  tasks:
+
+  #- name: Deploy the code
+  #  command: sh /root/deploy/bin/simple-deploy.sh
+
+  - name: Check that the group exists
+    group: name=mycompany state=present
+
+  - name: Get the Group ID
+    shell: 'getent group mycompany | cut -d: -f3'
+    register: groupid
+
+  - name: Create the User if needed
+    user: name=deploy shell=/bin/bash groups=mycompany append=yes
+
+  - name: add an authorized_key for the user (pulled from local dir)
+    authorized_key: user=deploy
+      key="{{ lookup('file', '/tmp/deploy.pub') }}"
