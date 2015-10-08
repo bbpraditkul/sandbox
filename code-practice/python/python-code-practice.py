@@ -38,7 +38,8 @@ def main():
             '15': [practice.testSysCommands,[]],
             '16': [practice.testPassingArgs,[]],
             '17': [practice.testMessageInput,[]],
-            '18': [practice.testMoreRegexesAndLists,[]]
+            '18': [practice.testMoreRegexesAndLists,[]],
+            '19': [practice.testLambdas,[]]
         }
 
     selected = ""

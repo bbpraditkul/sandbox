@@ -256,3 +256,18 @@ def testMoreRegexesAndLists():
 
     for line in my_output:
         print line
+
+#testLambdas() is equivalent to doing something like:
+# def somefunc(x):
+#   return x+1
+#lambdas are good for one-off functions that only get used once.
+# a good reference with limitations:
+# https://pythonconquerstheuniverse.wordpress.com/2011/08/29/lambda_tutorial/
+#
+def testLambdas():
+    print "testing lambda x: x+1"
+    f = (lambda x: x+1)
+    print f(4)
+    print "testing "
+    s = (lambda x: " ".join(x) )
+    print s('this is a test')
