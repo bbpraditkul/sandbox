@@ -16,6 +16,11 @@ os.system('uname -a')
 all_failed_users = defaultdict(list)
 
 for log_line in open(file_name):
+<<<<<<< HEAD
+=======
+    s = [('jordan', 1), ('sissel', 2), ('jordan', 3)]
+
+>>>>>>> bf7190a966bcef4d2b6245f5cbcaf564196f1428
     m = re.search('^(\S+\s\d{2}\s\d{2}:\d{2}:\d{2}).*Failed password.*user\s+(\S+)\sfrom\s(\d+\.\d+\.\d+\.\d+).*', log_line)
     if m:
         all_failed_users[m.group(2) + ' ' + m.group(3)].append(m.group(1))
