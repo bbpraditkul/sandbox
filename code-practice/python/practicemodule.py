@@ -125,8 +125,15 @@ def testListsAndLOL():
     #LoL2 = LoL[:]  #performs a slice which results in a reference to the list
     LoL2 = deepcopy(LoL)    #for LoL, deepcopies work to copy the contents in the nested list elements
     LoL2[0][1] = "z"
+    if "c" in LoL2[0]:
+        LoL2[0].remove("c")
+    LoL3 = deepcopy(LoL[0])
+    LoL3.insert(1,"yy")
+    LoL3.extend(['q','r','s'])
+    LoL3.pop
     print LoL
     print LoL2
+    print LoL3
 
 #testDictionaries() tests basic init and return of dictionaries
 def testDictionaries():
