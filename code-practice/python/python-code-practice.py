@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import practicemodule as practice
 import random
 import re
 import sys
 import os
 from copy import deepcopy
 from time import sleep
+import practicemodule as practice
 
 __author__ = 'BryanPraditkul'
 
@@ -39,7 +39,8 @@ def main():
             '16': [practice.testPassingArgs,[]],
             '17': [practice.testMessageInput,[]],
             '18': [practice.testMoreRegexesAndLists,[]],
-            '19': [practice.testLambdas,[]]
+            '19': [practice.testLambdas,[]],
+            '20': [practice.testTime,[]]
         }
 
     selected = ""

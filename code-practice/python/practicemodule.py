@@ -1,3 +1,10 @@
+import random
+import re
+import sys
+import os
+from copy import deepcopy
+import time
+
 __author__ = 'bryanpraditkul'
 
 """The following code tests random class methods and features of Python.  While there's no rhyme or rhythm to the madness,
@@ -271,3 +278,9 @@ def testLambdas():
     print "testing "
     s = (lambda x: " ".join(x) )
     print s('this is a test')
+
+def testTime():
+    print time.strftime("%H:%M:%S")
+    print "%s" % time.localtime()
+    s = time.strptime("12:00:00", "%H:%M:%S")
+    print s
