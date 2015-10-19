@@ -7,6 +7,7 @@ import os
 from copy import deepcopy
 from time import sleep
 import practicemodule as practice
+import interviewmodule as interview
 
 __author__ = 'BryanPraditkul'
 
@@ -40,7 +41,8 @@ def main():
             '17': [practice.testMessageInput,[]],
             '18': [practice.testMoreRegexesAndLists,[]],
             '19': [practice.testLambdas,[]],
-            '20': [practice.testTime,[]]
+            '20': [practice.testTime,[]],
+            '21': [interview.questionsGeneral,[]]
         }
 
     selected = ""
