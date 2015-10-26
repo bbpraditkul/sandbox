@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-The following hack repeats a preformatted block, with a why dynamic values...simple
+The following hack repeats a preformatted block with dynamic values...simple
 """
 
 filename = "block-output.txt"
