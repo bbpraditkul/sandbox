@@ -1,0 +1,50 @@
+[
+    [
+        [
+            "i-e0930a2a",
+            "m3.xlarge",
+            [
+                {
+                    "Value": "hcc",
+                    "Key": "Product"
+                },
+                {
+                    "Value": "hcc-mysql-prd2-new",
+                    "Key": "Name"
+                },
+                {
+                    "Value": "mysql",
+                    "Key": "Component"
+                },
+                {
+                    "Value": "prd",
+                    "Key": "Environment"
+                }
+            ]
+        ]
+    ],
+    [
+        [
+            "i-71d256bb",
+            "m3.xlarge",
+            [
+                {
+                    "Value": "redis",
+                    "Key": "Product"
+                },
+                {
+                    "Value": "redis-stg1-node2",
+                    "Key": "Name"
+                },
+                {
+                    "Value": "stg",
+                    "Key": "Environment"
+                },
+                {
+                    "Value": "node2",
+                    "Key": "Component"
+                }
+            ]
+        ]
+    ]
+]
