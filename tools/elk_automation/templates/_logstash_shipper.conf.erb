@@ -1,0 +1,484 @@
+<% $hostname = @device.name.split('.').first -%>
+input {
+  file {
+    type => "syslog-secure"
+    path => "/var/log/secure"
+    sincedb_path => "/srv/var/logstash/syslog-secure.sincedb"
+  }
+  file {
+    type => "puppet-reflog"
+    path => "/opt/puppet-data/puppet/.git/logs/refs/remotes/origin/master"
+    sincedb_path => "/srv/var/logstash/puppet-reflog.sincedb"
+  }
+  file {
+    type => "infradb-reflog"
+    path => "/opt/puppet-data/infradb/.git/logs/refs/remotes/origin/master"
+    sincedb_path => "/srv/var/logstash/infradb-reflog.sincedb"
+  }
+  file {
+    type => "syslog-yumlog"
+    path => "/var/log/yum.log"
+    sincedb_path => "/srv/var/logstash/syslog-yumlog.sincedb"
+  }
+<% if @device.has_any_services?("storm-worker", "storm-master") -%>
+  file {
+    type => "storm-log"
+    path => "/srv/app/storm/logs/*.log"
+    sincedb_path => "/srv/var/logstash/storm-log.sincedb"
+  }
+<% end -%>
+<% if @device.has_any_services?("kafka-broker") && @device.environment.name == "production" -%>
+  file {
+    type => "kafka-request_log"
+    path => "/srv/var/kafka/logs/kafka-request.log"
+    sincedb_path => "/srv/var/logstash/kafka-request_log.sincedb"
+  }
+<% end -%>
+<% if @device.has_any_services?("adserver", "real-time-bidder") && @device.environment.name == "production" -%>
+  file {
+    type => "server_rfi-log-hbase_client"
+    path => ["/srv/var/server.rfi/logs/hbase/client.txt"]
+    sincedb_path => "/srv/var/logstash/server_rfi-log-hbase_client.sincedb"
+  }
+<% end -%>
+<% if @device.has_any_services?("adserver", "real-time-bidder", "jobs", "ad-admin") && @device.environment.name == "production" -%>
+  file {
+    type => "server_rfi-log"
+    path => ["/srv/var/server.rfi/logs/serverLog.txt"]
+    sincedb_path => "/srv/var/logstash/server_rfi-log.sincedb"
+  }
+<% end -%>
+<% if @device.has_any_services?("video") && @device.environment.name == "production" -%>
+  file {
+    type => "server_rfi-log"
+    path => ["/srv/var/server.video/logs/serverLog.txt"]
+    sincedb_path => "/srv/var/logstash/server_video-log.sincedb"
+  }
+<% end -%>
+<% if @device.has_any_services?("monitor","monitor-hercules") -%>
+  file {
+    type => "nagios-log"
+    path => "/var/log/nagios/nagios.log"
+    sincedb_path => "/srv/var/logstash/nagios-log.sincedb"
+  }
+<% end -%>
+<% if @device.has_any_services?("hahdfs1", "hahdfs2") && @device.clusters[0].dns_name == "inw-hercules" -%>
+  file {
+    type => "hadoop-master-log"
+    path => [ "/srv/logs/hadoop/hadoop-hdfs-secondarynamenode*log", "/srv/logs/hadoop/hadoop-hdfs-namenode*log", "/srv/logs/hadoop/hadoop-hadoop-jobtracker*log" ]
+    sincedb_path => "/srv/var/logstash/hadoop-master-log.sincedb"
+  }
+<% end -%>
+
+<% if @device.has_any_services?("zookeeperServer") && @device.clusters[0].dns_name == "inw-hercules" -%>
+  file {
+    type => "hadoop-zookeeper-log"
+    path => [ "/srv/app/zookeeper/zookeeper.log" ]
+    sincedb_path => "/srv/var/logstash/hadoop-zookeeper-log.sincedb"
+  }
+<% end -%>
+
+<% if @device.has_any_services?("oozieServer") && @device.clusters[0].dns_name == "inw-hercules" -%>
+  file {
+    type => "oozieServer-log"
+    path => [ "/srv/logs/oozie/oozie.log", "/srv/logs/oozie/oozie-instrumentation.log", "/srv/logs/oozie/oozie-jpa.log" ]
+    sincedb_path => "/srv/var/logstash/oozieServer-log.sincedb"
+  }
+<% end -%>
+
+<% if @device.has_any_services?("hueServer") && @device.clusters[0].dns_name == "inw-hercules" -%>
+  file {
+    type => "hueServer-log"
+    path => [ "/srv/logs/hue/beeswax_server.log", "/srv/logs/hue/supervisor.log", "/srv/logs/hue/access.log", "/srv/logs/hue/error.log" , "/srv/logs/hue/runcpserver.log" ]
+    sincedb_path => "/srv/var/logstash/hueServer-log.sincedb"
+  }
+<% end -%>
+
+<% if @device.has_any_services?("etl-data-proc") && @device.environment.name == "production" -%>
+  file {
+    type => "etl-cron-log"
+    path => "/var/log/messages"
+    sincedb_path => "/srv/var/logstash/etl-cron-log.sincedb"
+  }
+<% end -%>
+
+<% if @device.has_any_services?("model-building") && @device.environment.name == "production" -%>
+  file {
+    type => "model-building-cron-log"
+    path => "/var/log/messages"
+    sincedb_path => "/srv/var/logstash/model-building-cron-log.sincedb"
+  }
+<% end -%>
+
+}
+
+filter {
+  grok {
+    patterns_dir => ["/srv/etc/logstash/patterns"]
+    pattern => "%{YUMLOG_LINE}"
+    type => "syslog-yumlog"
+  }
+
+  date {
+    timestamp => "MMMM dd HH:mm:ss"
+    timestamp => "MMM dd HH:mm:ss"
+    type => "syslog-yumlog"
+  }
+
+  mutate {
+    type => "syslog-yumlog"
+    exclude_tags => ["_grokparsefailure"]
+    replace => ["@message", "%{action} - %{package}"]
+  }
+
+  grep {
+    match => ["@message", "\ssudo:\s"]
+    add_tag => ["syslog-secure-sudo"]
+    drop => false
+    type => "syslog-secure"
+  }
+    
+  grok {
+    patterns_dir => ["/srv/etc/logstash/patterns"]
+    pattern => "%{SYSLOG_SECURE_SUDO}"
+    type => "syslog-secure"
+    tags => "syslog-secure-sudo"
+  }
+
+  grok {
+    pattern => "%{SYSLOGBASE} %{GREEDYDATA:message}"
+    type => "syslog-secure"
+    exclude_tags => ["syslog-secure-sudo"]
+  }
+
+  grep {
+    match => ["source_user", "nagios"]
+    drop => true
+    negate => true
+    tags => ["syslog-secure-sudo"]
+  }
+
+  grep {
+    match => ["message", "Did not receive identification string"]
+    drop => true
+    negate => true
+    type => "syslog-secure"
+    exclude_tags => ["syslog-secure-sudo", "syslog-secure-sudo-message"]
+  }
+
+  grep {
+    match => ["sudo_message", "."]
+    add_tag => ["syslog-secure-sudo-message"]
+    drop => false
+    tags => ["syslog-secure-sudo"]
+  }
+
+  date {
+    timestamp => "MMMM d HH:mm:ss"
+    timestamp => "MMM  d HH:mm:ss"
+    type => "syslog-secure"
+  }
+
+  mutate {
+    type => "syslog-secure"
+    exclude_tags => ["syslog-secure-sudo", "_grokparsefailure"]
+    replace => ["@message", "%{program} - %{message}"]
+  }
+
+  mutate {
+    tags => ["syslog-secure-sudo"]
+    exclude_tags => ["_grokparsefailure", "syslog-secure-sudo-message"]
+    replace => ["@message", "sudo - %{source_user}(%{target_user}): %{command}"]
+  }
+
+  mutate {
+    tags => ["syslog-secure-sudo-message"]
+    exclude_tags => ["_grokparsefailure"]
+    replace => ["@message", "sudo - %{source_user}(%{target_user}) %{sudo_message}: %{command}"]
+  }
+
+  mutate {
+    tags => ["syslog-secure-sudo"]
+    exclude_tags => ["_grokparsefailure"]
+    remove => ["timestamp", "command", "sudo_message"]
+  }
+
+  mutate {
+    type => "syslog-secure"
+    exclude_tags => ["syslog-secure-sudo", "_grokparsefailure"]
+    remove => ["timestamp", "message", "logsource", "pid"]
+  }
+
+<% if @device.has_any_services?("model-building") -%>
+  grep {
+    match => ["@message", "kernel"]
+    negate => true
+    type => "model-building-cron-log"
+  }
+<% end %>
+
+<% if @device.has_any_services?("etl-data-proc") -%>
+  grep {
+    match => ["@message", "kernel"]
+    negate => true
+    type => "etl-cron-log"
+  }
+<% end %>
+
+<% if @device.has_any_services?("hahdfs1", "hahdfs2", "hadoop2Master") -%>
+  grep {
+    match => ["@message", "org.apache.hadoop.hdfs.server.namenode.FSNamesystem.audit"]
+    drop => true
+    negate => true
+    type => "hadoop-master-log"
+  }
+  grep {
+    match => ["@message", "No groups available"]
+    drop => true
+    negate => true
+    type => "hadoop-master-log"
+  }
+  grep {
+    match => ["@message", "org.apache.hadoop.security.UserGroupInformation"]
+    drop => true
+    negate => true
+    type => "hadoop-master-log"
+  }
+  grep {
+    match => ["@message", "Operation category READ is not supported in state standby"]
+    drop => true
+    negate => true
+    type => "hadoop-master-log"
+  }
+  grep {
+    match => ["@message", "org.apache.hadoop.hdfs.StateChange"]
+    drop => true
+    negate => true
+    type => "hadoop-master-log"
+  }
+<% end -%>
+<% if @device.has_any_services?("storm-worker", "storm-master") -%>
+  multiline {
+    negate => true
+    pattern => "^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}"
+    what => "previous"
+    type => "storm-log"
+  }
+  grok {
+    patterns_dir => ["/srv/etc/logstash/patterns"]
+    pattern => "^%{STORM_LINE}"
+    type => "storm-log"
+  }
+  grep {
+    match => ["message", "^Fetching from Kafka"]
+    drop => true
+    negate => true
+    type => "storm-log"
+  }
+  grep {
+    match => ["message", "^flushed cache"]
+    drop => true
+    negate => true
+    type => "storm-log"
+  }
+  grep {
+    match => ["message", "^Launching worker with command"]
+    drop => true
+    negate => true
+    type => "storm-log"
+  }
+  grep {
+    match => ["message", "still hasn't started$"]
+    drop => true
+    negate => true
+    type => "storm-log"
+  }
+  grep {
+    match => ["message", "^Shutting down [0-9a-f]{8}-"]
+    drop => true
+    negate => true
+    type => "storm-log"
+  }
+  grep {
+    match => ["message", "^Shut down [0-9a-f]{8}-"]
+    drop => true
+    negate => true
+    type => "storm-log"
+  }
+  grep {
+    match => ["message", "^Error when trying to kill"]
+    drop => true
+    negate => true
+    type => "storm-log"
+  }
+  grep {
+    match => ["@message", "Caused by: ", "@message", "Exception"]
+    add_tag => ["exception"]
+    drop => false
+    type => "storm-log"
+  }
+
+  date {
+    timestamp => "yyyy-MM-dd HH:mm:ss"
+    type => "storm-log"
+  }
+
+  mutate {
+    type => "storm-log"
+    exclude_tags => ["_grokparsefailure"]
+    replace => ["@message", "%{loglevel} - %{class} - %{message}"]
+  }
+
+  mutate {
+    type => "storm-log"
+<% if @device.has_any_services?("storm-worker") -%>
+    add_tag => ["storm-worker"]
+  <% end -%>
+<% if @device.has_any_services?("storm-master") -%>
+    add_tag => ["storm-master"]
+  <% end -%>
+
+    remove => ["timestamp", "message"]
+  }
+<% end -%>
+<% if @device.has_any_services?("kafka-broker") && @device.environment.name == "production" -%>
+  multiline {
+    negate => true
+    pattern => "^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}"
+    what => "previous"
+    type => "kafka-request_log"
+  }
+  grok {
+    patterns_dir => ["/srv/etc/logstash/patterns"]
+    pattern => "^%{SERVER_RFI_LINE}"
+    type => "kafka-request_log"
+  }
+
+  grep {
+    match => ["@message", "Caused by: ", "@message", "Exception"]
+    add_tag => ["exception"]
+    drop => false
+    type => "kafka-request_log"
+  }
+
+  date {
+    timestamp => "yyyy-MM-dd HH:mm:ss,SSS"
+    type => "kafka-request_log"
+  }
+
+  mutate {
+    type => "kafka-request_log"
+    exclude_tags => ["_grokparsefailure"]
+    replace => ["@message", "%{loglevel} - %{class} - %{message}"]
+  }
+
+  mutate {
+    type => "kafka-request_log"
+    add_tag => ["kafka-broker"]
+    remove => ["timestamp", "message"]
+  }
+<% end -%>
+
+<% if @device.has_any_services?("etl-data-proc") && @device.environment.name == "production" -%>
+  grep {
+    match => ["@message", "etl-"]
+    add_tag => ["etl-data-proc"]
+    type => "etl-cron-log"
+  }
+<% end -%>
+<% if @device.has_any_services?("real-time-bidder", "adserver") && @device.environment.name == "production" -%>
+  grep {
+    match => ["@message", "Slow DNS lookup"]
+    type => "server_rfi-log-hbase_client"
+  }
+  grok {
+    patterns_dir => ["/srv/etc/logstash/patterns"]
+    pattern => "^%{SERVER_RFI_LINE}"
+    type => "server_rfi-log-hbase_client"
+  }
+  mutate {
+    type => "server_rfi-log-hbase_client"
+    exclude_tags => ["_grokparsefailure"]
+    replace => ["@message", "%{loglevel} - %{class} - %{message}"]
+  }
+  date {
+    timestamp => "yyyy-MM-dd HH:mm:ss,SSS"
+    type => "server_rfi-log-hbase_client"
+  }
+  mutate {
+    type => "server_rfi-log-hbase_client"
+<% if @device.has_any_services?("real-time-bidder") -%>
+    add_tag => ["real-time-bidder"]
+<% end -%>
+<% if @device.has_any_services?("adserver") -%>
+    add_tag => ["adserver"]
+<% end -%>
+  }
+<% end -%>
+<% if @device.has_any_services?("real-time-bidder", "adserver", "jobs", "ad-admin", "video") && @device.environment.name == "production" -%>
+  multiline {
+    negate => true
+    pattern => "^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}"
+    what => "previous"
+    type => "server_rfi-log"
+  }
+
+  grok {
+    patterns_dir => ["/srv/etc/logstash/patterns"]
+    pattern => "^%{SERVER_RFI_LINE}"
+    type => "server_rfi-log"
+  }
+
+  grep {
+    match => ["@message", "Caused by: ", "@message", "Exception"]
+    add_tag => ["exception"]
+    drop => false
+    type => "server_rfi-log"
+  }
+
+  date {
+    timestamp => "yyyy-MM-dd HH:mm:ss,SSS"
+    type => "server_rfi-log"
+  }
+
+  mutate {
+    type => "server_rfi-log"
+    exclude_tags => ["_grokparsefailure"]
+    replace => ["@message", "%{loglevel} - %{class} - %{message}"]
+  }
+
+  mutate {
+    type => "server_rfi-log"
+<% if @device.has_any_services?("real-time-bidder") -%>
+    add_tag => ["real-time-bidder"]
+<% end -%>
+<% if @device.has_any_services?("adserver") -%>
+    add_tag => ["adserver"]
+<% end -%>
+<% if @device.has_any_services?("jobs") -%>
+    add_tag => ["jobs"]
+<% end -%>
+<% if @device.has_any_services?("ad-admin") -%>
+    add_tag => ["ad-admin"]
+<% end -%>
+<% if @device.has_any_services?("video") -%>
+    add_tag => ["video"]
+<% end -%>
+    remove => ["timestamp", "message"]
+  }
+<% end -%>
+}
+
+output {
+  redis {
+<% if $hostname == "inw-326" -%>
+    host => ["<%= Service.find_by_name("logstash-stage").devices.join('", "') -%>"]
+<% else -%>
+    host => ["<%= Service.find_by_name("logstash-new").devices.join('", "') -%>"]
+<% end -%>
+    shuffle_hosts => true
+    batch => true
+    data_type => "list"
+    key => "logstash"
+  }
+}

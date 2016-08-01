@@ -1,0 +1,9 @@
+LOGLEVEL ([D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|FATAL)
+
+GREEDYDATA_NEWLINE (?m:.*)
+
+STORM_TIMESTAMP %{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}
+
+STORM_CLASS (?:[^ ]+)
+
+STORM_LINE %{STORM_TIMESTAMP:timestamp}\s+%{STORM_CLASS:class}\s+\[%{LOGLEVEL:loglevel}\]\s+%{GREEDYDATA_NEWLINE:message}

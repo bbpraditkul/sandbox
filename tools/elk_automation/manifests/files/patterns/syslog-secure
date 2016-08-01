@@ -1,0 +1,4 @@
+SUDO_MESSAGE [^;]+
+
+SYSLOG_SECURE_SUDO %{SYSLOGTIMESTAMP:timestamp} %{HOSTNAME} sudo: +%{USERNAME:source_user} : (?:%{SUDO_MESSAGE:sudo_message} ; )?TTY=[^;]+; PWD=[^;]+; USER=%{USERNAME:target_user} ; COMMAND=%{GREEDYDATA:command}
+

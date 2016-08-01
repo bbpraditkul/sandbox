@@ -1,0 +1,20 @@
+input {
+<% for device in Service.find_by_name("logstash-stage").devices -%>
+  redis {
+    host => "<%= device -%>"
+    port => 6379
+    data_type => "list"
+    key => "logstash"
+    codec => "json"
+  }
+<% end -%>
+}
+
+output {
+  elasticsearch {
+    cluster => "logstash-stage"
+    index => "logstash-%{+YYYY.MM.dd}"
+    host => "<%= @device.name -%>"
+    port => 7300
+  }
+}

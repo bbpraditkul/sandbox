@@ -1,0 +1,37 @@
+logstash_host: inw-48.rfiserve.net
+logstash_port: 11000
+graphite_host: graphite.rfiserve.net
+graphite_port: 2004
+
+# Logging section is only used in python version 2.7 and up
+logging:
+  version: 1
+  formatters:
+    default:
+      format: '%(asctime)s %(levelname)s %(module)s:%(lineno)d - %(message)s'
+  handlers:
+    console:
+      class : logging.StreamHandler
+      formatter: default
+      level   : DEBUG
+      stream  : ext://sys.stdout
+  loggers:
+    logstash-counter:
+      level: INFO
+      handlers: [console]
+
+monitors:
+  class:
+    is_field: !!bool True
+    type: "server_rfi-log"
+    event_cardinality: 1
+    global_cardinality: 100
+    graphite_namespace: "logstash.fields.class"
+    graphite_mangle:
+      - !!python/tuple ['.', '_']
+  loglevel:
+    is_field: !!bool True
+    type: "server_rfi-log"
+    event_cardinality: 1
+    global_cardinality: 100
+    graphite_namespace: "logstash.fields.loglevel"

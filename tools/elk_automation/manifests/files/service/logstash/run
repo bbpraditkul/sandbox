@@ -1,0 +1,11 @@
+#!/bin/bash
+
+exec 2>&1
+
+export ES_HEAP_SIZE=70g
+ulimit -l unlimited
+ulimit -n 150000
+
+chown -R elasticsearch /srv/var/elasticsearch-logstash
+
+exec setuidgid elasticsearch /opt/elasticsearch/0.19/bin/elasticsearch -f -Des.config=/srv/etc/elasticsearch-logstash/elasticsearch.yml

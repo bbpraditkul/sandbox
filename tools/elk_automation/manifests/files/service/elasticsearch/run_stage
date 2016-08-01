@@ -1,0 +1,13 @@
+#!/bin/bash
+
+exec 2>&1
+
+export JAVA_HOME=/usr/java/jdk1.7.0_55
+export ES_HEAP_SIZE=3g
+ulimit -l unlimited
+ulimit -n 150000
+
+chown -R elasticsearch /srv/var/elasticsearch
+
+
+exec setuidgid elasticsearch /opt/elasticsearch/1.4/bin/elasticsearch -Des.config=/srv/etc/elasticsearch/elasticsearch.yml

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+exec 2>&1
+
+export JAVA_HOME=/usr/java/jdk1.7.0_55
+export PATH=$JAVA_HOME/bin:$PATH
+export HOME=/srv/var/logstash
+export LS_HEAP_SIZE=1g
+
+chown -R logstash /srv/var/logstash
+
+
+exec setuidgid logstash /opt/logstash/1.4/bin/logstash -f /srv/etc/logstash/logstash.indexer.conf

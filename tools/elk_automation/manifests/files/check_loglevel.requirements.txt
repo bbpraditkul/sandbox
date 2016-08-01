@@ -1,0 +1,3 @@
+requests
+-e git+git://github.com/tabletcorry/spark.py.git#egg=py-spark
+numpy

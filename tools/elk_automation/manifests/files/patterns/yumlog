@@ -1,0 +1,7 @@
+YUMLOG_TIMESTAMP \w+\s+\d+\s+\d+:\d+:\d+
+
+YUMLOG_ACTION \w+
+
+YUMLOG_PACKAGE .*
+
+YUMLOG_LINE %{YUMLOG_TIMESTAMP:timestamp}\s+%{YUMLOG_ACTION:action}:\s+%{YUMLOG_PACKAGE:package}

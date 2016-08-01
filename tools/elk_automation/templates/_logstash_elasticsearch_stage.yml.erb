@@ -1,0 +1,55 @@
+<% $hostname = @device.name.split('.').first -%>
+
+cluster.name: logstash-stage
+cluster.routing.allocation.node_concurrent_recoveries: 3
+
+node.name: "<%= $hostname -%>"
+node.master: true
+node.data: true
+
+#index.store.compress.stored: true
+#index.store.compress.tv: true
+#index.translog.flush_threshold_ops: 20000
+
+indices.recovery.max_bytes_per_sec: 700mb
+indices.recovery.concurrent_streams: 6
+#indices.fielddata.cache.size: 30%
+
+
+path.conf: /srv/etc/elasticsearch-logstash
+path.data: <% for diskNumber in (2..13) %><% if diskNumber != 2 %>,<% end %>/srv/data/disk<%= diskNumber.to_s() -%>/var/elasticsearch-logstash/data<% end %>
+path.work: /srv/var/elasticsearch-logstash/tmp
+path.logs: /srv/var/elasticsearch-logstash/logs
+path.plugins: /srv/var/elasticsearch-logstash/plugins
+
+bootstrap.mlockall: true
+
+#network.bind_host: <%= @device.interface("internal").addresses[0].ip %>
+network.publish_host: <%= @device.interface("internal").addresses[0].ip %>
+#network.host: <%= @device.interface("internal").addresses[0].ip %>
+
+transport.tcp.compress: true
+
+gateway.recover_after_nodes: 2
+gateway.recover_after_time: 5m
+gateway.expected_nodes: <%= Service.find_by_name("logstash-stage").devices.size %>
+
+discovery.zen.minimum_master_nodes: <%= Service.find_by_name("logstash-stage").devices.size-1 %>
+ 
+#discovery.zen.ping.timeout: 120s
+#discovery.zen.ping.multicast.address: <%= @device.interface("internal").addresses[0].ip %>
+discovery.zen.ping.multicast.enabled: false
+discovery.zen.ping.unicast.hosts: [<%= Service.find_by_name("logstash-stage").devices.join(", ") -%>]
+
+index.search.slowlog.level: TRACE
+index.search.slowlog.threshold.query.warn: 10s
+index.search.slowlog.threshold.query.info: 5s
+index.search.slowlog.threshold.query.debug: 2s
+index.search.slowlog.threshold.query.trace: 500ms
+index.search.slowlog.threshold.fetch.warn: 1s
+index.search.slowlog.threshold.fetch.info: 800ms
+index.search.slowlog.threshold.fetch.debug: 500ms
+index.search.slowlog.threshold.fetch.trace: 200ms
+
+http.cors.allow-origin: "*"
+http.cors.enabled: true

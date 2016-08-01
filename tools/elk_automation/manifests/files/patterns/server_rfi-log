@@ -1,0 +1,12 @@
+MILLISECOND [0-9]{3}
+SERVER_RFI_TIMESTAMP %{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND},%{MILLISECOND}
+
+SERVER_RFI_THREAD (?:(?:[^\]]+))
+
+JAVACLASS (?:[a-zA-Z0-9-]+\.)+[A-Za-z0-9$]+
+
+LOGLEVEL ([D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|FATAL)
+
+GREEDYDATA_NEWLINE (?m:.*)
+
+SERVER_RFI_LINE %{SERVER_RFI_TIMESTAMP:timestamp}\s+\[%{SERVER_RFI_THREAD}\]\s+%{LOGLEVEL:loglevel}\s+%{JAVACLASS:class}\s+-\s+%{GREEDYDATA_NEWLINE:message}

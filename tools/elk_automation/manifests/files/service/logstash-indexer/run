@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+exec 2>&1
+
+cd /srv/var/logstash
+
+export JAVA_HOME=/usr/java/jdk1.6.0_33
+export PATH=$JAVA_HOME/bin:$PATH
+export HOME=/srv/var/logstash
+
+exec java -Xmx4G -Xms4G -jar /srv/app/logstash/logstash-*.jar agent -v -f /srv/etc/logstash/logstash.indexer.conf
