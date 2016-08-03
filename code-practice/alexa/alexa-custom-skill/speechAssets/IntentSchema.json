@@ -1,0 +1,31 @@
+{
+  "intents": [
+    {
+      "intent": "GetSideEffectsIntent",
+      "slots": [
+      {
+        "name" : "Med",
+        "type": "LIST_OF_MEDS"
+      }
+     ]
+    },
+    {
+      "intent": "GetContactInfoIntent",
+      "slots": [
+      {
+        "name" : "Contact",
+        "type": "LIST_OF_CONTACTS"
+      }
+     ]
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    }
+  ]
+}

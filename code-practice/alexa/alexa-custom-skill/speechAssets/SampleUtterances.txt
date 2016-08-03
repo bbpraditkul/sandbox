@@ -1,0 +1,23 @@
+GetSideEffectsIntent what are side effects for {Med}
+GetSideEffectsIntent show me side effects for {Med}
+GetSideEffectsIntent what side effects for {Med}
+GetSideEffectsIntent whats side effects for {Med}
+GetSideEffectsIntent tell me side effects for {Med}
+GetSideEffectsIntent give side effects for {Med}
+GetSideEffectsIntent give me side effects for {Med}
+GetSideEffectsIntent get side effects {Med}
+GetSideEffectsIntent get me side effects for {Med}
+GetSideEffectsIntent find side effects for {Med}
+GetSideEffectsIntent find me side effects for {Med}
+GetSideEffectsIntent side effects for {Med}
+
+GetContactInfoIntent find {Contact}
+GetContactInfoIntent locate {Contact}
+GetContactInfoIntent tell me about {Contact}
+GetContactInfoIntent where does {Contact} sit
+GetContactInfoIntent where is {Contact}
+GetContactInfoIntent what office does {Contact} work in
+GetContactInfoIntent who is {Contact}
+
+AMAZON.StopIntent no
+AMAZON.StopIntent stop
