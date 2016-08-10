@@ -29,21 +29,30 @@ parser.add_argument('-v', '--version', action='version', version='%(prog)s versi
 #
 parser.add_argument('-s', '--seconds', action='store', dest='wait_seconds', default=5, help='seconds to run the generic load')
 parser.add_argument('-n', '--numbers', action='store', dest='numbers', default=1, help='number of random integers to generate and store/destroy')
-parser.add_argument('-t', '--type', action='store', dest='type', help='type of busy work')
+parser.add_argument('-b', '--busyness', action='store', dest='busyness', default='', help='type of busy work')
+parser.add_argument('-t', '--type', action='store', dest='type', default='ops', help='type of load')
+parser.add_argument('-o', '--ops', action='store', dest='ops', help='number of operations')
+
 args = parser.parse_args()
 
-acceptable_types = ['disk', 'cpu', 'memory']
+acceptable_busyness = ['', 'disk', 'cpu', 'memory']
+acceptable_types = ['time','ops']
 
-if args.type not in [acceptable_types]:
+if args.type not in acceptable_types:
     print ("unknown type, exiting...")
+    print ("acceptable options: " + ','.join(acceptable_types))
     exit()
 
-start_epoch = time.time()
-current_epoch = start_epoch
-end_epoch = start_epoch+int(args.wait_seconds)
+if args.busyness not in acceptable_busyness:
+    print ("unknown busyness, exiting...")
+    print ("acceptable options: " + ','.join(acceptable_busyness))
+    exit()
 
-print ('Start Time: ' + time.ctime(start_epoch))
-print ('End Time: ' + time.ctime(end_epoch))
+def main():
+    if args.type == 'time':
+        time_based_load()
+    elif args.type == 'ops':
+        ops_based_load(int(args.ops))
 
 def busy_cpu_work():
     my_list = []
@@ -51,6 +60,7 @@ def busy_cpu_work():
         my_list.append(random.randint(1,10))
     print (my_list)  #keep the CPU busy
     del my_list[:]
+    return
 
 def busy_disk_work():
     my_list = []
@@ -65,21 +75,42 @@ def busy_disk_work():
     #fh.closed
 
     del my_list[:]
+    return
 
-while (current_epoch < end_epoch):
-    #time.sleep(2)
-    if args.type == 'disk':
-        busy_disk_work()
-    elif args.type == 'cpu':
-        busy_cpu_work()
-#    elif args.type == 'memory':
-        #busy_mem_work()
-    else:
-        None
+def ops_based_load(ops):
+    for i in range(0,ops):
+        if args.busyness == 'disk':
+            busy_disk_work()
+        elif args.busyness == 'cpu':
+            busy_cpu_work()
+        #elif args.busyness == 'memory':
+            #busy_mem_work()
+        else:
+            None
+    return
 
-    current_epoch = time.time()
+def time_based_load():
+    start_epoch = time.time()
+    current_epoch = start_epoch
+    end_epoch = start_epoch+int(args.wait_seconds)
 
-    #print (my_list)
+    print ('Start Time: ' + time.ctime(start_epoch))
+    print ('End Time: ' + time.ctime(end_epoch))
 
+    while (current_epoch < end_epoch):
+        #time.sleep(2)
 
+        if args.busyness == 'disk':
+            busy_disk_work()
+        elif args.busyness == 'cpu':
+            busy_cpu_work()
+        #elif args.busyness == 'memory':
+            #busy_mem_work()
+        else:
+            None
 
+        current_epoch = time.time()
+    return
+
+if __name__ == "__main__":
+    main()
