@@ -11,6 +11,13 @@ import random
 # The goal of the following script is to test the performance between pypy and std python
 # Work in progress...
 #
+# A few initial numbers:
+#   ./cpu-load.py -t ops -o <ops> -b cpu
+#  Ops          Python3      Pypy
+#  10000000     22secs       1sec
+#  1000000000   2641secs     86secs
+#
+
 
 parser = argparse.ArgumentParser(description="Load up the system a bit to test pypy vs std python")
 
@@ -29,7 +36,7 @@ parser.add_argument('-v', '--version', action='version', version='%(prog)s versi
 #
 parser.add_argument('-s', '--seconds', action='store', dest='wait_seconds', default=5, help='seconds to run the generic load')
 parser.add_argument('-n', '--numbers', action='store', dest='numbers', default=1, help='number of random integers to generate and store/destroy')
-parser.add_argument('-b', '--busyness', action='store', dest='busyness', default='', help='type of busy work')
+parser.add_argument('-b', '--busyness', action='store', dest='busyness', default='cpu', help='type of busy work')
 parser.add_argument('-t', '--type', action='store', dest='type', default='ops', help='type of load')
 parser.add_argument('-o', '--ops', action='store', dest='ops', help='number of operations')
 
@@ -58,7 +65,7 @@ def busy_cpu_work():
     my_list = []
     for i in range(0,int(args.numbers)):
         my_list.append(random.randint(1,10))
-    print (my_list)  #keep the CPU busy
+    #print (my_list)  #keep the CPU busy
     del my_list[:]
     return
 
@@ -78,6 +85,7 @@ def busy_disk_work():
     return
 
 def ops_based_load(ops):
+    start_epoch = time.time()
     for i in range(0,ops):
         if args.busyness == 'disk':
             busy_disk_work()
@@ -87,6 +95,8 @@ def ops_based_load(ops):
             #busy_mem_work()
         else:
             None
+    end_epoch = time.time()
+    print ("Test completed in: " + str(int(end_epoch)-int(start_epoch)) + "seconds\n")
     return
 
 def time_based_load():
