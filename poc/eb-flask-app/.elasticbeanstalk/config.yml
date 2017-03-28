@@ -1,0 +1,17 @@
+branch-defaults:
+  default:
+    environment: inspector-poc-env
+    group_suffix: null
+global:
+  application_name: inspector-poc
+  branch: null
+  default_ec2_keyname: aws-bpraditkul-sandbox
+  default_platform: python2.7
+  default_region: us-west-2
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: eb-cli
+  repository: null
+  sc: null
+  workspace_type: Application
